@@ -101,13 +101,18 @@ if (serverConfig.proxy) {
 	var paths = Object.keys(serverConfig.proxy);
 
 	paths.forEach(function (path) {
-		devServer.all(path, function (req, res) {
-			console.log('proxying ' + path + ' to ' + serverConfig.proxy[path]);
+		console.log('proxying ' + path + ' to ' + serverConfig.proxy[path]);
+		devServer.all(path, function (req, res, next) {
 			var proxyOptions = {
-				path: path,
 				target: serverConfig.proxy[path]
 			}
-			proxy.web(req, res, proxyOptions)
+			proxy.web(req, res, proxyOptions, function (err) {
+                console.log(err.message);
+                if (!res.headersSent) {
+                    res.writeHead(502, { 'content-type': 'application/json' });
+                }
+                res.end(JSON.stringify({ error: 'proxy_error', reason: e.message }));
+			}.bind(this))
 		});
 	});
 }
