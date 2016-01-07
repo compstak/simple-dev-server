@@ -111,7 +111,7 @@ if (serverConfig.proxy) {
                 if (!res.headersSent) {
                     res.writeHead(502, { 'content-type': 'application/json' });
                 }
-                res.end(JSON.stringify({ error: 'proxy_error', reason: e.message }));
+                res.end(JSON.stringify({ error: 'proxy_error', reason: err.message }));
 			}.bind(this))
 		});
 	});
