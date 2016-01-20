@@ -100,6 +100,11 @@ if (serverConfig.app && typeof serverConfig.app !== 'string') {
 if (serverConfig.proxy) {
 	var paths = Object.keys(serverConfig.proxy);
 
+	proxy.on('error', function(e) {
+		console.log('Error in proxy!');
+		console.error(e);
+	});
+
 	paths.forEach(function (path) {
 		console.log('proxying ' + path + ' to ' + serverConfig.proxy[path]);
 		devServer.all(path, function (req, res, next) {
