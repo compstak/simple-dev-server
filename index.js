@@ -133,7 +133,7 @@ if (serverConfig.app && typeof serverConfig.app === 'string') {
 	}
 
 	devServer.get('*', function (req, res) {
-		send(req).pipe(res);
+		send(req, serverConfig.app).pipe(res);
 	});
 }
 
