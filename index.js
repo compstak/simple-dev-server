@@ -17,12 +17,13 @@ var cwd = process.cwd();
 var isWebpack = true;
 try {
 	var webpackConfigPath = path.join(cwd, 'webpack.config');
+	var webpackConfig = require(webpackConfigPath);
 } catch (e) {
 	isWebpack = false;
 }
 var serverConfigPath = path.join(cwd, 'devserver.config');
 
-var webpackConfig = require(webpackConfigPath);
+
 var serverConfig = require(serverConfigPath);
 
 
