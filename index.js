@@ -94,7 +94,7 @@ if (serverConfig.publicPaths) {
 // use app if not SPA
 if (serverConfig.app && typeof serverConfig.app !== 'string') {
 	console.log('Using the specified express app.');
-	devServer.use(app);
+	devServer.use(serverConfig.app);
 }
 
 // use proxy
