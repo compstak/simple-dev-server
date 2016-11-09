@@ -90,13 +90,6 @@ if (serverConfig.publicPaths) {
 	});
 }
 
-
-// use app if not SPA
-if (serverConfig.app && typeof serverConfig.app !== 'string') {
-	console.log('Using the specified express app.');
-	devServer.use(serverConfig.app);
-}
-
 // use proxy
 if (serverConfig.proxy) {
 	var paths = Object.keys(serverConfig.proxy);
@@ -121,6 +114,12 @@ if (serverConfig.proxy) {
 			}.bind(this))
 		});
 	});
+}
+
+// use app if not SPA
+if (serverConfig.app && typeof serverConfig.app !== 'string') {
+	console.log('Using the specified express app.');
+	devServer.use(serverConfig.app);
 }
 
 // use SPA
