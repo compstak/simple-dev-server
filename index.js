@@ -24,10 +24,7 @@ try {
 var serverConfigPath = path.join(cwd, 'devserver.config');
 
 
-var serverConfig = require(serverConfigPath);
-
-
-var devServer = express();
+var serverConfigs = require(serverConfigPath);
 
 if (isWebpack) {
 	var middlewareOptions = {
@@ -41,102 +38,109 @@ if (isWebpack) {
 	var webpackDevServer = webpackDevMiddleware(webpack(webpackConfig), middlewareOptions);
 }
 
-// use mock data if it exists
-if (serverConfig.mockPath) {
-	console.log('Using ' + serverConfig.mockPath + ' for mock data.');
-	devServer.use('*', function (req, res, next) {
-		var mockPath = path.join(cwd, serverConfig.mockPath, req.originalUrl);
-		
-		fs.stat(mockPath, function (err, stat) {
-			if (err) {
-				fs.stat(mockPath+'.json', function (err, stat) { 
-					if (err) {
-						next();
-						return;
-					}
-
-					if (stat.isFile()) {
-						console.log('serving mock for '+req.originalUrl);
-						send(req, mockPath+'.json').pipe(res);
-					} else {
-						next();
-					}
-				});
-				return;
-			}
-
-			if (stat.isFile()) {
-				console.log('serving mock for '+req.originalUrl);
-				send(req, mockPath).pipe(res);
-			} else {
-				next();
-			}
-		});
-
-	});
+if (!Array.isArray(serverConfigs)) {
+	serverConfigs = [serverConfigs];
 }
 
-if (isWebpack) {
-	devServer.use(webpackDevServer);
-}
+module.exports = serverConfigs.map(function (serverConfig) {
+	var devServer = express();
 
-// use file if exists
-if (serverConfig.publicPaths) {
-	var paths = Object.keys(serverConfig.publicPaths);
+	// use mock data if it exists
+	if (serverConfig.mockPath) {
+		console.log('Using ' + serverConfig.mockPath + ' for mock data.');
+		devServer.use('*', function (req, res, next) {
+			var mockPath = path.join(cwd, serverConfig.mockPath, req.originalUrl);
+			
+			fs.stat(mockPath, function (err, stat) {
+				if (err) {
+					fs.stat(mockPath+'.json', function (err, stat) { 
+						if (err) {
+							next();
+							return;
+						}
 
-	paths.forEach(function (path) {
-		console.log('Serving static data on ' + path + ' from ' + serverConfig.publicPaths[path]);
-		devServer.use(path, express.static(serverConfig.publicPaths[path]));
-	});
-}
+						if (stat.isFile()) {
+							console.log('serving mock for '+req.originalUrl);
+							send(req, mockPath+'.json').pipe(res);
+						} else {
+							next();
+						}
+					});
+					return;
+				}
 
-// use proxy
-if (serverConfig.proxy) {
-	var paths = Object.keys(serverConfig.proxy);
+				if (stat.isFile()) {
+					console.log('serving mock for '+req.originalUrl);
+					send(req, mockPath).pipe(res);
+				} else {
+					next();
+				}
+			});
 
-	proxy.on('error', function(e) {
-		console.log('Error in proxy!');
-		console.error(e);
-	});
-
-	paths.forEach(function (path) {
-		console.log('proxying ' + path + ' to ' + serverConfig.proxy[path]);
-		devServer.all(path, function (req, res, next) {
-			var proxyOptions = {
-				target: serverConfig.proxy[path]
-			}
-			proxy.web(req, res, proxyOptions, function (err) {
-                console.log(err.message);
-                if (!res.headersSent) {
-                    res.writeHead(502, { 'content-type': 'application/json' });
-                }
-                res.end(JSON.stringify({ error: 'proxy_error', reason: err.message }));
-			}.bind(this))
-		});
-	});
-}
-
-// use app if not SPA
-if (serverConfig.app && typeof serverConfig.app !== 'string') {
-	console.log('Using the specified express app.');
-	devServer.use(serverConfig.app);
-}
-
-// use SPA
-if (serverConfig.app && typeof serverConfig.app === 'string') {
-	console.log('Serving ' + serverConfig.app + ' as your single page app.');
-	if (isWebpack) {
-		devServer.get('*', function (req, res, next) {
-			req.url = serverConfig.app;
-			webpackDevServer(req, res, next);
 		});
 	}
 
-	devServer.get('*', function (req, res) {
-		send(req, serverConfig.app).pipe(res);
-	});
-}
+	if (isWebpack) {
+		devServer.use(webpackDevServer);
+	}
 
-devServer.set('port', serverConfig.port || 3000);
+	// use file if exists
+	if (serverConfig.publicPaths) {
+		var paths = Object.keys(serverConfig.publicPaths);
 
-module.exports = devServer;
+		paths.forEach(function (path) {
+			console.log('Serving static data on ' + path + ' from ' + serverConfig.publicPaths[path]);
+			devServer.use(path, express.static(serverConfig.publicPaths[path]));
+		});
+	}
+
+	// use proxy
+	if (serverConfig.proxy) {
+		var paths = Object.keys(serverConfig.proxy);
+
+		proxy.on('error', function(e) {
+			console.log('Error in proxy!');
+			console.error(e);
+		});
+
+		paths.forEach(function (path) {
+			console.log('proxying ' + path + ' to ' + serverConfig.proxy[path]);
+			devServer.all(path, function (req, res, next) {
+				var proxyOptions = {
+					target: serverConfig.proxy[path]
+				}
+				proxy.web(req, res, proxyOptions, function (err) {
+	                console.log(err.message);
+	                if (!res.headersSent) {
+	                    res.writeHead(502, { 'content-type': 'application/json' });
+	                }
+	                res.end(JSON.stringify({ error: 'proxy_error', reason: err.message }));
+				}.bind(this))
+			});
+		});
+	}
+
+	// use app if not SPA
+	if (serverConfig.app && typeof serverConfig.app !== 'string') {
+		console.log('Using the specified express app.');
+		devServer.use(serverConfig.app);
+	}
+
+	// use SPA
+	if (serverConfig.app && typeof serverConfig.app === 'string') {
+		console.log('Serving ' + serverConfig.app + ' as your single page app.');
+		if (isWebpack) {
+			devServer.get('*', function (req, res, next) {
+				req.url = serverConfig.app;
+				webpackDevServer(req, res, next);
+			});
+		}
+
+		devServer.get('*', function (req, res) {
+			send(req, serverConfig.app).pipe(res);
+		});
+	}
+
+	devServer.set('port', serverConfig.port || 3000);
+	return devServer;
+});

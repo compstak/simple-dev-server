@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
-var devServer = require('./index');
+var devServers = require('./index');
 
-devServer.listen(devServer.get('port'));
+devServers.forEach(function (devServer) {
+	console.log('starting dev server on port ' + devServer.get('port'));
+	devServer.listen(devServer.get('port'));
+});

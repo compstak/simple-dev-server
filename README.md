@@ -4,7 +4,7 @@ This is a simple dev server that works with webpack apps or without webpack. It 
 
 ## Usage 
 
-### 1. Create `devserver.config.js`.
+### Create `devserver.config.js`.
 
 ```javascript
 module.exports = {
@@ -22,6 +22,8 @@ module.exports = {
 ```
 
 All options are optional.
+
+If you'd like to start more than one server with the same build, useful when making multiple apps, use an array of config objects instead of a single one.
 
 #### Options
 
