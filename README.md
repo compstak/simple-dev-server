@@ -40,23 +40,25 @@ If you'd like to start more than one server with the same build, useful when mak
 The recommended way is to install it as a devDependency to your project, then save it as your `npm start` or `npm run dev` script.
 
 ```
-npm install --save-dev simple-dev-server
+yarn add --dev simple-dev-server
 ```
 
-Then add this to your package.json:
+Then add this to the "scripts" section of your package.json:
 ```json
 {
   "name": "YourApp",
   "scripts": {
-    "start": "./node_modules/.bin/simple-dev-server"
+    "start": "simple-dev-server"
   }
 }
 ```
 
+and run `yarn start`
+
 #### As a global command
 
 ```
-npm install -g simple-dev-server
+yarn add --global simple-dev-server
 ```
 
 Then you may simply run `simple-dev-server`
@@ -65,7 +67,7 @@ Then you may simply run `simple-dev-server`
 
 ### Just Webpack
 ```
-// Nothing. It'll run on port 3000
+// Nothing. It'll default to port 3000
 ```
 
 ### Serve a static directory and proxy your API and content images
