@@ -65,7 +65,7 @@ Then you may simply run `simple-dev-server`
 
 ### Just Webpack
 ```
-// Nothing, but you'll still need an empty file.
+// Nothing. It'll run on port 3000
 ```
 
 ### Serve a static directory and proxy your API and content images

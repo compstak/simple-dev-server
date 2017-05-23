@@ -15,16 +15,21 @@ var supportsColor = require('supports-color');
 var cwd = process.cwd();
 
 var isWebpack = true;
+var serverConfigs;
 try {
 	var webpackConfigPath = path.join(cwd, 'webpack.config');
 	var webpackConfig = require(webpackConfigPath);
+
 } catch (e) {
 	isWebpack = false;
 }
-var serverConfigPath = path.join(cwd, 'devserver.config');
 
-
-var serverConfigs = require(serverConfigPath);
+try {
+	var serverConfigPath = path.join(cwd, 'devserver.config');
+	serverConfigs = require(serverConfigPath);
+} catch (e) {
+	serverConfigs = {};
+}
 
 if (isWebpack) {
 	var middlewareOptions = {
@@ -108,14 +113,14 @@ module.exports = serverConfigs.map(function (serverConfig) {
 			devServer.all(path, function (req, res, next) {
 				var proxyOptions = {
 					target: serverConfig.proxy[path]
-				}
+				};
 				proxy.web(req, res, proxyOptions, function (err) {
-	                console.log(err.message);
-	                if (!res.headersSent) {
-	                    res.writeHead(502, { 'content-type': 'application/json' });
-	                }
-	                res.end(JSON.stringify({ error: 'proxy_error', reason: err.message }));
-				}.bind(this))
+					console.log(err.message);
+					if (!res.headersSent) {
+						res.writeHead(502, { 'content-type': 'application/json' });
+					}
+					res.end(JSON.stringify({ error: 'proxy_error', reason: err.message }));
+				}.bind(this));
 			});
 		});
 	}
