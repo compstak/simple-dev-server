@@ -55,10 +55,10 @@ module.exports = serverConfigs.map(function (serverConfig) {
 		console.log('Using ' + serverConfig.mockPath + ' for mock data.');
 		devServer.use('*', function (req, res, next) {
 			var mockPath = path.join(cwd, serverConfig.mockPath, req.originalUrl);
-			
+
 			fs.stat(mockPath, function (err, stat) {
 				if (err) {
-					fs.stat(mockPath+'.json', function (err, stat) { 
+					fs.stat(mockPath+'.json', function (err, stat) {
 						if (err) {
 							next();
 							return;
@@ -125,26 +125,34 @@ module.exports = serverConfigs.map(function (serverConfig) {
 		});
 	}
 
-	// use app if not SPA
-	if (serverConfig.app && typeof serverConfig.app !== 'string') {
-		console.log('Using the specified express app.');
-		devServer.use(serverConfig.app);
+	if (serverConfig.app) {
+		serverConfig.apps = [serverConfig.app];
 	}
 
-	// use SPA
-	if (serverConfig.app && typeof serverConfig.app === 'string') {
-		console.log('Serving ' + serverConfig.app + ' as your single page app.');
-		if (isWebpack) {
-			devServer.get('*', function (req, res, next) {
-				req.url = serverConfig.app;
-				webpackDevServer(req, res, next);
-			});
+	var apps = serverConfig.apps || [];
+
+	apps.forEach(function (app) {
+		// use app if not SPA
+		if (app && typeof  app !== 'string') {
+			console.log('Using the specified express app.');
+			devServer.use(app);
 		}
 
-		devServer.get('*', function (req, res) {
-			send(req, serverConfig.app).pipe(res);
-		});
-	}
+		// use SPA
+		if (app && typeof  app === 'string') {
+			console.log('Serving ' +  app + ' as your single page app.');
+			if (isWebpack) {
+				devServer.get('*', function (req, res, next) {
+					req.url =  app;
+					webpackDevServer(req, res, next);
+				});
+			}
+
+			devServer.get('*', function (req, res) {
+				send(req,  app).pipe(res);
+			});
+		}
+	});
 
 	devServer.set('port', serverConfig.port || 3000);
 	return devServer;

@@ -30,7 +30,8 @@ If you'd like to start more than one server with the same build, useful when mak
 * `proxy` - key/value pairs of URLs to servers to proxy requests. This allows you to work with an external API and/or image server.
 * `publicPaths` - a key/value pair of URLs to the static file directories in which they are contained.
 * `mockPath` - You can make a folder on your project that contains sample responses from your API calls. Paths that exist in this directory structure will be used instead of making HTTP calls.
-* `app` - either an express app (such as your production app) or a file path to the index of a single page app.
+* `app` - An express app or a string that will be used to server your single page app.
+* `apps` - an array of apps, end with a string to serve a single page app. Ignored if `app` is present.
 * `port` - the port number that will be used.
 
 ### 2. Running it
@@ -93,3 +94,16 @@ module.exports = {
 };
 ```
 You can have webpack serve index.html using the `webpack-html-plugin`, if it doesn't exist in the build it will be served statically.
+
+### Using a node app plus an index.html from the build
+```javascript
+var app = require('./back-end-express-app');
+
+module.exports = {
+	proxy: {
+		'/api/*': 'http://url.of.prod.api/',
+	},
+	apps: [app, '/index.html']
+};
+```
+
