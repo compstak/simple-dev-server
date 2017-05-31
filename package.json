@@ -1,6 +1,6 @@
 {
   "name": "simple-dev-server",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A webpack optional dev server with proxies and mocking that requires almost no configuration.",
   "main": "index.js",
   "bin": "bin.js",
