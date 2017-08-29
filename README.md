@@ -16,6 +16,7 @@ module.exports = {
 	},
 	mockPath: 'mock',
 	app: '/index.html', // this can also be an express app
+	serverConfig: {}, // config for webpack-hot-server-middleware
 	port: 5450, // 3000 by default
 };
 
@@ -23,7 +24,9 @@ module.exports = {
 
 All options are optional.
 
-If you'd like to start more than one server with the same build, useful when making multiple apps, use an array of config objects instead of a single one.
+If you'd like to start more than one server with the same build (useful when making multiple apps) use an array of config objects instead of a single one.
+
+If you're rendering on the server it will use [webpack-hot-server-middleware](https://github.com/60frames/webpack-hot-server-middleware) to recompile your server side code. Just be sure to have a server entry in your webpack config.
 
 #### Options
 
@@ -32,6 +35,7 @@ If you'd like to start more than one server with the same build, useful when mak
 * `mockPath` - You can make a folder on your project that contains sample responses from your API calls. Paths that exist in this directory structure will be used instead of making HTTP calls.
 * `app` - An express app or a string that will be used to server your single page app.
 * `apps` - an array of apps, end with a string to serve a single page app. Ignored if `app` is present.
+* `serverConfig` - used for webpack-hot-server-middleware if there's a server entry in your webpack config.
 * `port` - the port number that will be used.
 
 ### 2. Running it
@@ -59,14 +63,14 @@ and run `yarn start`
 #### As a global command
 
 ```
-yarn add --global simple-dev-server
+yarn global add simple-dev-server
 ```
 
 Then you may simply run `simple-dev-server`
 
 ## Simple Config Examples
 
-### Just Webpack
+### Just Webpack (even with isomoriphic)
 ```
 // Nothing. It'll default to port 3000
 ```

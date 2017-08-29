@@ -19,6 +19,7 @@
     "send": "^0.13.0",
     "supports-color": "^3.1.2",
     "webpack": "^1.12.9",
-    "webpack-dev-middleware": "^1.4.0"
+    "webpack-dev-middleware": "^1.4.0",
+    "webpack-hot-server-middleware": "^0.1.0"
   }
 }

@@ -2,6 +2,7 @@ var path = require('path');
 var fs = require('fs');
 
 var webpackDevMiddleware = require('webpack-dev-middleware');
+var webpackHotServerMiddleware = require('webpack-hot-server-middleware');
 var webpack = require('webpack');
 
 var express = require('express');
@@ -15,21 +16,26 @@ var supportsColor = require('supports-color');
 var cwd = process.cwd();
 
 var isWebpack = true;
-var serverConfigs;
+var devServerConfigs;
 try {
-	var webpackConfigPath = path.join(cwd, 'webpack.config');
+	var webpackConfigPath = path.join(cwd, 'webpack.config.js');
 	var webpackConfig = require(webpackConfigPath);
 
 } catch (e) {
+	console.error(e);
 	isWebpack = false;
 }
 
 try {
-	var serverConfigPath = path.join(cwd, 'devserver.config');
-	serverConfigs = require(serverConfigPath);
+	var devServerConfigPath = path.join(cwd, 'devserver.config.js');
+	console.log(devServerConfigPath);
+	devServerConfigs = require(devServerConfigPath);
 } catch (e) {
-	serverConfigs = {};
+	console.error(e);
+	devServerConfigs = {};
 }
+
+var compiler = webpack(webpackConfig);
 
 if (isWebpack) {
 	var middlewareOptions = {
@@ -40,21 +46,21 @@ if (isWebpack) {
 		}
 	};
 
-	var webpackDevServer = webpackDevMiddleware(webpack(webpackConfig), middlewareOptions);
+	var webpackDevServer = webpackDevMiddleware(compiler, middlewareOptions);
 }
 
-if (!Array.isArray(serverConfigs)) {
-	serverConfigs = [serverConfigs];
+if (!Array.isArray(devServerConfigs)) {
+	devServerConfigs = [devServerConfigs];
 }
 
-module.exports = serverConfigs.map(function (serverConfig) {
+module.exports = devServerConfigs.map(function (devServerConfig) {
 	var devServer = express();
 
 	// use mock data if it exists
-	if (serverConfig.mockPath) {
-		console.log('Using ' + serverConfig.mockPath + ' for mock data.');
+	if (devServerConfig.mockPath) {
+		console.log('Using ' + devServerConfig.mockPath + ' for mock data.');
 		devServer.use('*', function (req, res, next) {
-			var mockPath = path.join(cwd, serverConfig.mockPath, req.originalUrl);
+			var mockPath = path.join(cwd, devServerConfig.mockPath, req.originalUrl);
 
 			fs.stat(mockPath, function (err, stat) {
 				if (err) {
@@ -90,18 +96,18 @@ module.exports = serverConfigs.map(function (serverConfig) {
 	}
 
 	// use file if exists
-	if (serverConfig.publicPaths) {
-		var paths = Object.keys(serverConfig.publicPaths);
+	if (devServerConfig.publicPaths) {
+		var paths = Object.keys(devServerConfig.publicPaths);
 
 		paths.forEach(function (path) {
-			console.log('Serving static data on ' + path + ' from ' + serverConfig.publicPaths[path]);
-			devServer.use(path, express.static(serverConfig.publicPaths[path]));
+			console.log('Serving static data on ' + path + ' from ' + devServerConfig.publicPaths[path]);
+			devServer.use(path, express.static(devServerConfig.publicPaths[path]));
 		});
 	}
 
 	// use proxy
-	if (serverConfig.proxy) {
-		var paths = Object.keys(serverConfig.proxy);
+	if (devServerConfig.proxy) {
+		var paths = Object.keys(devServerConfig.proxy);
 
 		proxy.on('error', function(e) {
 			console.log('Error in proxy!');
@@ -109,10 +115,10 @@ module.exports = serverConfigs.map(function (serverConfig) {
 		});
 
 		paths.forEach(function (path) {
-			console.log('proxying ' + path + ' to ' + serverConfig.proxy[path]);
+			console.log('proxying ' + path + ' to ' + devServerConfig.proxy[path]);
 			devServer.all(path, function (req, res, next) {
 				var proxyOptions = {
-					target: serverConfig.proxy[path]
+					target: devServerConfig.proxy[path]
 				};
 				proxy.web(req, res, proxyOptions, function (err) {
 					console.log(err.message);
@@ -125,11 +131,15 @@ module.exports = serverConfigs.map(function (serverConfig) {
 		});
 	}
 
-	if (serverConfig.app) {
-		serverConfig.apps = [serverConfig.app];
+	if (devServerConfig.app) {
+		devServerConfig.apps = [devServerConfig.app];
 	}
 
-	var apps = serverConfig.apps || [];
+	var apps = devServerConfig.apps || [];
+
+	if (Array.isArray(webpackConfig) && webpackConfig.find(c => c.name === 'server')) {
+		devServer.use(webpackHotServerMiddleware(compiler, devServerConfig.serverConfig));
+	}
 
 	apps.forEach(function (app) {
 		// use app if not SPA
@@ -154,6 +164,6 @@ module.exports = serverConfigs.map(function (serverConfig) {
 		}
 	});
 
-	devServer.set('port', serverConfig.port || 3000);
+	devServer.set('port', devServerConfig.port || 3000);
 	return devServer;
 });
