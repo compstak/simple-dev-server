@@ -37,16 +37,15 @@ try {
 
 var compiler = webpack(webpackConfig);
 
+var webpackDevServer;
 if (isWebpack) {
 	var middlewareOptions = {
 		stats: {
-			cached: false,
-			cachedAssets: false,
 			colors: supportsColor
 		}
 	};
 
-	var webpackDevServer = webpackDevMiddleware(compiler, middlewareOptions);
+	webpackDevServer = webpackDevMiddleware(compiler, middlewareOptions);
 }
 
 if (!Array.isArray(devServerConfigs)) {
