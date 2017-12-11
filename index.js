@@ -118,7 +118,7 @@ module.exports = devServerConfigs.map(function (devServerConfig) {
 			devServer.all(path, function (req, res, next) {
 				var proxyOptions = {
 					target: devServerConfig.proxy[path],
-					rejectUnauthorized: false
+					changeOrigin: true
 				};
 				proxy.web(req, res, proxyOptions, function (err) {
 					console.log(err.message);
