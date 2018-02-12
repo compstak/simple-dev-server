@@ -35,10 +35,11 @@ try {
 	devServerConfigs = {};
 }
 
-var compiler = webpack(webpackConfig);
+var compiler;
 
 var webpackDevServer;
 if (isWebpack) {
+	compiler = webpack(webpackConfig);
 	var middlewareOptions = {
 		stats: {
 			colors: supportsColor
