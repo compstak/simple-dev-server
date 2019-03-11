@@ -10,7 +10,7 @@
   "author": "Stu Kabakoff <sakabako@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/compstak/simple-dev-server.git"
+    "url": "https://github.com/stutrek/simple-dev-server.git"
   },
   "license": "MIT",
   "dependencies": {
