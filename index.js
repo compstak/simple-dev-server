@@ -43,7 +43,8 @@ if (isWebpack) {
 	var middlewareOptions = {
 		stats: {
 			colors: supportsColor
-		}
+		},
+		publicPath: webpackConfig.output.publicPath || '/'
 	};
 
 	webpackDevServer = webpackDevMiddleware(compiler, middlewareOptions);
