@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { forEach } from './index.js';
+import server from './index.js';
 
-forEach(function (devServer) {
+server.forEach(function (devServer) {
 	console.log('starting dev server on port ' + devServer.get('port'));
 	devServer.listen(devServer.get('port'));
 });
