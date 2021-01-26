@@ -1,5 +1,5 @@
 {
-  "name": "simple-dev-server",
+  "name": "@compstak/simple-dev-server",
   "version": "3.0.1",
   "description": "A webpack optional dev server with proxies and mocking that requires almost no configuration.",
   "main": "index.js",
@@ -10,7 +10,7 @@
   "author": "Stu Kabakoff <sakabako@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stutrek/simple-dev-server.git"
+    "url": "https://github.com/compstak/simple-dev-server.git"
   },
   "license": "MIT",
   "dependencies": {
@@ -21,5 +21,8 @@
     "webpack": "^4.0.0",
     "webpack-dev-middleware": "^3.6.1",
     "webpack-hot-server-middleware": "^0.6.0"
-  }
+  },
+  "publishConfig": {
+		"registry": "https://nexus.compstak.com/repository/npm-releases/"
+	}
 }
