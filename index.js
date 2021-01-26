@@ -5,7 +5,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotServerMiddleware from 'webpack-hot-server-middleware';
 import webpack from 'webpack';
 
-import express, { static } from 'express';
+import express from 'express';
 import send from 'send';
 
 import { createProxyServer } from 'http-proxy';
@@ -102,7 +102,7 @@ export default devServerConfigs.map(function (devServerConfig) {
 
 		paths.forEach(function (path) {
 			console.log('Serving static data on ' + path + ' from ' + devServerConfig.publicPaths[path]);
-			devServer.use(path, static(devServerConfig.publicPaths[path]));
+			devServer.use(path, express.static(devServerConfig.publicPaths[path]));
 		});
 	}
 
