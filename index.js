@@ -20,7 +20,7 @@ var isWebpack = true;
 var devServerConfigs;
 try {
 	var webpackConfigPath = join(cwd, 'webpack.config.js');
-	var webpackConfig = require(webpackConfigPath);
+	var webpackConfig = import(webpackConfigPath);
 
 } catch (e) {
 	console.error(e);
@@ -30,7 +30,7 @@ try {
 try {
 	var devServerConfigPath = join(cwd, 'devserver.config.js');
 	console.log(devServerConfigPath);
-	devServerConfigs = require(devServerConfigPath);
+	devServerConfigs = import(devServerConfigPath);
 } catch (e) {
 	console.error(e);
 	devServerConfigs = {};
