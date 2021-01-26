@@ -1,24 +1,24 @@
-var path = require('path');
-var fs = require('fs');
+import { join } from 'path';
+import { stat as _stat } from 'fs';
 
-var webpackDevMiddleware = require('webpack-dev-middleware');
-var webpackHotServerMiddleware = require('webpack-hot-server-middleware');
-var webpack = require('webpack');
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotServerMiddleware from 'webpack-hot-server-middleware';
+import webpack from 'webpack';
 
-var express = require('express');
-var send = require('send');
+import express, { static } from 'express';
+import send from 'send';
 
-var httpProxy = require('http-proxy');
-var proxy = httpProxy.createProxyServer();
+import { createProxyServer } from 'http-proxy';
+var proxy = createProxyServer();
 
-var supportsColor = require('supports-color');
+import supportsColor from 'supports-color';
 
 var cwd = process.cwd();
 
 var isWebpack = true;
 var devServerConfigs;
 try {
-	var webpackConfigPath = path.join(cwd, 'webpack.config.js');
+	var webpackConfigPath = join(cwd, 'webpack.config.js');
 	var webpackConfig = require(webpackConfigPath);
 
 } catch (e) {
@@ -27,7 +27,7 @@ try {
 }
 
 try {
-	var devServerConfigPath = path.join(cwd, 'devserver.config.js');
+	var devServerConfigPath = join(cwd, 'devserver.config.js');
 	console.log(devServerConfigPath);
 	devServerConfigs = require(devServerConfigPath);
 } catch (e) {
@@ -54,18 +54,18 @@ if (!Array.isArray(devServerConfigs)) {
 	devServerConfigs = [devServerConfigs];
 }
 
-module.exports = devServerConfigs.map(function (devServerConfig) {
+export default devServerConfigs.map(function (devServerConfig) {
 	var devServer = express();
 
 	// use mock data if it exists
 	if (devServerConfig.mockPath) {
 		console.log('Using ' + devServerConfig.mockPath + ' for mock data.');
 		devServer.use('*', function (req, res, next) {
-			var mockPath = path.join(cwd, devServerConfig.mockPath, req.originalUrl);
+			var mockPath = join(cwd, devServerConfig.mockPath, req.originalUrl);
 
-			fs.stat(mockPath, function (err, stat) {
+			_stat(mockPath, function (err, stat) {
 				if (err) {
-					fs.stat(mockPath+'.json', function (err, stat) {
+					_stat(mockPath+'.json', function (err, stat) {
 						if (err) {
 							next();
 							return;
@@ -102,7 +102,7 @@ module.exports = devServerConfigs.map(function (devServerConfig) {
 
 		paths.forEach(function (path) {
 			console.log('Serving static data on ' + path + ' from ' + devServerConfig.publicPaths[path]);
-			devServer.use(path, express.static(devServerConfig.publicPaths[path]));
+			devServer.use(path, static(devServerConfig.publicPaths[path]));
 		});
 	}
 
