@@ -45,7 +45,7 @@ if (isWebpack) {
 		stats: {
 			colors: supportsColor
 		},
-		publicPath: webpackConfig.output.publicPath || '/'
+		publicPath: webpackConfig?.output?.publicPath ?? '/'
 	};
 
 	webpackDevServer = webpackDevMiddleware(compiler, middlewareOptions);
