@@ -1,8 +1,9 @@
 {
   "name": "@compstak/simple-dev-server",
-  "version": "4.0.8",
+  "version": "4.0.9",
   "description": "A webpack optional dev server with proxies and mocking that requires almost no configuration.",
   "main": "index.js",
+  "type": "module",
   "bin": "bin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
