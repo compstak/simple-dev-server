@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const server = require("./index.mjs");
+import { forEach } from "./index.mjs";
 
-server.forEach(function (devServer) {
+forEach(function (devServer) {
   console.log("starting dev server on port " + devServer.get("port"));
   devServer.listen(devServer.get("port"));
 });
