@@ -1,6 +1,6 @@
 {
   "name": "@compstak/simple-dev-server",
-  "version": "4.0.15",
+  "version": "4.0.16",
   "description": "A webpack optional dev server with proxies and mocking that requires almost no configuration.",
   "main": "index.mjs",
   "bin": "bin.mjs",

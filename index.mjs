@@ -3,6 +3,7 @@ import { stat as _stat } from "fs";
 
 import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackHotServerMiddleware from "webpack-hot-server-middleware";
+import webpackHotMiddleware from "webpack-hot-middleware";
 import webpack from "webpack";
 
 import express from "express";
@@ -15,11 +16,13 @@ import supportsColor from "supports-color";
 
 var cwd = process.cwd();
 
+const getImport = async (path) => await import(path);
+
 var isWebpack = true;
 var devServerConfigs;
 try {
   var webpackConfigPath = join(cwd, "webpack.config.js");
-  var webpackConfig = require(webpackConfigPath);
+  var webpackConfig = getImport(webpackConfigPath);
   console.log(webpackConfigPath);
 } catch (e) {
   console.error(e);
@@ -29,7 +32,7 @@ try {
 try {
   var devServerConfigPath = join(cwd, "devserver.config.js");
   console.log(devServerConfigPath);
-  devServerConfigs = require(devServerConfigPath);
+  devServerConfigs = getImport(devServerConfigPath);
 } catch (e) {
   console.error(e);
   devServerConfigs = {};
@@ -94,7 +97,7 @@ export default devServerConfigs.map(function (devServerConfig) {
 
   if (isWebpack) {
     devServer.use(webpackDevServer);
-    devServer.use(require("webpack-hot-middleware")(compiler));
+    devServer.use(webpackHotMiddleware(compiler));
   }
 
   // use file if exists
