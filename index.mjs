@@ -16,47 +16,49 @@ import supportsColor from "supports-color";
 
 var cwd = process.cwd();
 
-const getImport = async (path) => await import(path);
-
 var isWebpack = true;
-var devServerConfigs;
-try {
-  var webpackConfigPath = join(cwd, "webpack.config.js");
-  var webpackConfig = getImport(webpackConfigPath);
-  console.log(webpackConfigPath);
-} catch (e) {
-  console.error(e);
-  isWebpack = false;
-}
+var devServerConfigs = [];
+(async () => {
+  try {
+    var webpackConfigPath = join(cwd, "webpack.config.js");
+    var webpackConfig = await import(webpackConfigPath);
+    webpackConfig = webpackConfig.default;
+    console.log(webpackConfigPath);
+  } catch (e) {
+    console.error(e);
+    isWebpack = false;
+  }
 
-try {
-  var devServerConfigPath = join(cwd, "devserver.config.js");
-  console.log(devServerConfigPath);
-  devServerConfigs = getImport(devServerConfigPath);
-} catch (e) {
-  console.error(e);
-  devServerConfigs = {};
-}
+  try {
+    var devServerConfigPath = join(cwd, "devserver.config.js");
+    console.log(devServerConfigPath);
+    devServerConfigs = await import(devServerConfigPath);
+    devServerConfigs = devServerConfigs.default;
+  } catch (e) {
+    console.error(e);
+    devServerConfigs = {};
+  }
 
-var compiler;
+  var compiler;
 
-var webpackDevServer;
-if (isWebpack) {
-  compiler = webpack(webpackConfig);
-  var middlewareOptions = {
-    stats: {
-      //   preset: "minimal",
-      colors: supportsColor,
-    },
-    publicPath: webpackConfig.output?.publicPath ?? "/",
-  };
+  var webpackDevServer;
+  if (isWebpack) {
+    compiler = webpack(webpackConfig);
+    var middlewareOptions = {
+      stats: {
+        //   preset: "minimal",
+        colors: supportsColor,
+      },
+      publicPath: webpackConfig.output?.publicPath ?? "/",
+    };
 
-  webpackDevServer = webpackDevMiddleware(compiler, middlewareOptions);
-}
+    webpackDevServer = webpackDevMiddleware(compiler, middlewareOptions);
+  }
 
-if (!Array.isArray(devServerConfigs)) {
-  devServerConfigs = [devServerConfigs];
-}
+  if (!Array.isArray(devServerConfigs)) {
+    devServerConfigs = [devServerConfigs];
+  }
+})();
 
 export default devServerConfigs.map(function (devServerConfig) {
   var devServer = express();
