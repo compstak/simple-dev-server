@@ -1,10 +1,9 @@
 {
   "name": "@compstak/simple-dev-server",
-  "version": "4.0.7",
+  "version": "4.0.8",
   "description": "A webpack optional dev server with proxies and mocking that requires almost no configuration.",
   "main": "index.js",
   "bin": "bin.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,8 +18,9 @@
     "http-proxy": "^1.12.0",
     "send": "^0.13.0",
     "supports-color": "^3.1.2",
-    "webpack": "^5.17.0",
+    "webpack": "^5.28.0",
     "webpack-dev-middleware": "^4.1.0",
+    "webpack-hot-middleware": "^2.25.0",
     "webpack-hot-server-middleware": "^0.6.1"
   },
   "publishConfig": {
