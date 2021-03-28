@@ -8,8 +8,8 @@ import webpack from "webpack";
 import express from "express";
 import send from "send";
 
-import { createProxyServer } from "http-proxy";
-var proxy = createProxyServer();
+import httpProxy from "http-proxy";
+var proxy = httpProxy.createProxyServer();
 
 import supportsColor from "supports-color";
 
