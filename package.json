@@ -1,5 +1,5 @@
 {
-  "name": "@compstak/simple-dev-server",
+  "name": "simple-dev-server",
   "version": "4.0.18",
   "description": "A webpack optional dev server with proxies and mocking that requires almost no configuration.",
   "main": "index.mjs",
@@ -23,7 +23,5 @@
     "webpack-hot-middleware": "^2.25.0",
     "webpack-hot-server-middleware": "^0.6.1"
   },
-  "publishConfig": {
-    "registry": "https://nexus.compstak.com/repository/npm-releases/"
-  }
+  "packageManager": "yarn@3.2.4"
 }
